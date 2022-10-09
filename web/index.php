@@ -31,20 +31,22 @@
    require_once ('config.php');
 
    try {
-      $connection = new PDO("mysql:host={$host};dbname={$database};charset=utf8", $user, $password);
+      $connection = new mysqli($host, $user, $password, $database);
       $query = $connection->query("SELECT city_name, population FROM cities ORDER BY population DESC");
-      $cities = $query->fetchAll();
 
-      if (empty($cities)) {
+      if (empty($query)) {
          echo "<tr><td>Няма данни.</td></tr>\n";
       } else {
-         foreach ($cities as $city) {
-            print "<tr><td>{$city['city_name']}</td><td align=\"right\">{$city['population']}</td></tr>\n";
+         while ($row = $query->fetch_assoc()) {
+            print "<tr><td>{$row['city_name']}</td><td align=\"right\">{$row['population']}</td></tr>\n";
          }
       }
    }
-   catch (PDOException $e) {
-      print "<tr><td>Няма връзка към базата. Опитайте отново.</td></tr>\n";
+   catch (Exception $e) {
+      print "<tr><td><div align='center'>\n";
+      print "Няма връзка към базата. Опитайте отново. <a href=\"#\" onclick=\"document.getElementById('error').style = 'display: block;';\">Детайли</a><br/>\n";
+      print "<span id='error' style='display: none;'><small><i>".$e->getMessage()." <a href=\"#\" onclick=\"document.getElementById('error').style = 'display: none;';\">Скрий</a></i></small></span>\n";
+      print "</div></td></tr>\n";
    }
 ?>
       </table>
