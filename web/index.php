@@ -31,18 +31,19 @@
    require_once ('config.php');
 
    try {
-      $connection = new mysqli($host, $user, $password, $database);
+      $connection = new PDO("mysql:host={$host};dbname={$database};charset=utf8", $user, $password);
       $query = $connection->query("SELECT city_name, population FROM cities ORDER BY population DESC");
+      $cities = $query->fetchAll();
 
-      if (empty($query)) {
+      if (empty($cities)) {
          echo "<tr><td>Няма данни.</td></tr>\n";
       } else {
-         while ($row = $query->fetch_assoc()) {
-            print "<tr><td>{$row['city_name']}</td><td align=\"right\">{$row['population']}</td></tr>\n";
+         foreach ($cities as $city) {
+            print "<tr><td>{$city['city_name']}</td><td align=\"right\">{$city['population']}</td></tr>\n";
          }
       }
    }
-   catch (Exception $e) {
+   catch (PDOException $e) {
       print "<tr><td><div align='center'>\n";
       print "Няма връзка към базата. Опитайте отново. <a href=\"#\" onclick=\"document.getElementById('error').style = 'display: block;';\">Детайли</a><br/>\n";
       print "<span id='error' style='display: none;'><small><i>".$e->getMessage()." <a href=\"#\" onclick=\"document.getElementById('error').style = 'display: none;';\">Скрий</a></i></small></span>\n";
