@@ -1,0 +1,31 @@
+version: "3.8"
+
+volumes:
+  db-prod:
+    driver: local
+
+services:
+    web-prod:
+        image: amashofdna/bgapp-web
+        container_name: web-prod
+        ports:
+            - 80:80
+        volumes:
+            - "./web:/var/www/html:ro"
+        networks:
+            - app-network-prod
+        depends_on:
+            - db-prod
+    db-prod:
+        image: amashofdna/bgapp-db
+        container_name: db-prod
+        hostname: db
+        networks:
+            - app-network-prod
+        volumes:
+            - db-prod:/var/lib/mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: "12345"
+
+networks:
+    app-network-prod:

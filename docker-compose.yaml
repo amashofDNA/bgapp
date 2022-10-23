@@ -1,4 +1,9 @@
 version: "3.8"
+
+volumes:
+  db:
+    driver: local
+
 services:
     web:
         build:
@@ -7,7 +12,7 @@ services:
         ports:
             - 8080:80
         volumes:
-            - "/home/original_app/web:/var/www/html:ro"
+            - "./web:/var/www/html:ro"
         networks:
             - app-network
         depends_on:
@@ -18,7 +23,10 @@ services:
             dockerfile: Dockerfile.db
         networks:
             - app-network
+        volumes:
+            - db:/var/lib/mysql
         environment:
             MYSQL_ROOT_PASSWORD: "12345"
+
 networks:
     app-network:
